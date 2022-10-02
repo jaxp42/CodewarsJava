@@ -4,91 +4,87 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 public class UrlShortener {
-    static HashMap<String, String> shortUrlAsKeyDB = new HashMap<>();
-    static HashMap<String, String> longUrlAsKeyDB = new HashMap<>();
-    static int databaseSize = 0;
-    static int numLetters = 1;
-    static int loopCounter = 0;
-    static char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
-    static char[] counter = new char[]{'a'};
+    private static HashMap<String, String> shortUrlAsKeyDB = new HashMap<>();
+    private static HashMap<String, String> longUrlAsKeyDB = new HashMap<>();
+    private static int databaseSize = 0;
+    private static int[] loopCounters = new int[]{0};
+    private static char[] letters = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+    private static char[] counter = new char[]{'a'};
+    private static boolean endLoop = false;
 
     public static void main(String[] args){
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c3e"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c3e"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c31"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c32"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c33"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c34"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c35"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c36"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c37"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c38"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c39"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c310"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c311"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c312"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c313"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c314"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c315"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c316"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c317"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c318"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c319"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c320"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c321"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c322"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c323"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c324"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c325"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c326"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c327"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c328"));
-        System.out.println(urlShortener("https://www.codewars.com/kata/5ef9ca8b76be6d001d5e1c329"));
+        for(int i=1; i<20000; i++){
+            if(i == 702){
+                System.out.println("");
+            }
+            urlShortener("https://www.codewars.com/kata/" + i);
+        }
+
+        System.out.println(urlRedirector("short.ly/aaaa"));
     }
 
-    public static String urlShortener(String longUrl){
-        String shortedUrl = "";
+    public static String urlShortener(String longURL){
+        String shortedURL = "";
 
         //first check if url is already in db
-        if(longUrlAsKeyDB.containsKey(longUrl)){
-            return longUrlAsKeyDB.get(longUrl);
+        if(longUrlAsKeyDB.containsKey(longURL)){
+            return longUrlAsKeyDB.get(longURL);
         }
         else{
-            shortedUrl = generateShortUrl();
-            shortUrlAsKeyDB.put(shortedUrl, longUrl);
-            longUrlAsKeyDB.put(longUrl, shortedUrl);
+            shortedURL = "short.ly/" + generateShortUrl();
+            shortUrlAsKeyDB.put(shortedURL, longURL);
+            longUrlAsKeyDB.put(longURL, shortedURL);
             databaseSize++;
         }
 
-        return shortedUrl;
+        return shortedURL;
     }
 
-    public static String urlRedirector(String shortUrl){
-        return shortUrlAsKeyDB.get(shortUrl);
+    public static String urlRedirector(String shortURL){
+        return shortUrlAsKeyDB.get(shortURL);
     }
 
     private static String generateShortUrl(){
-        String shortUrl = "";
+        String shortURL = "";
 
         //Checks if the actual counter has reached its limit. In that case create a new counter with one more letter
-        if(databaseSize == Math.pow(letters.length, numLetters)){
+        if(isCounterLimit()){
             counter = new char[counter.length + 1];
+            loopCounters = new int[loopCounters.length + 1];
             Arrays.fill(counter, 'a');
-            loopCounter = 1;
+            Arrays.fill(loopCounters, 1);
         }
         else{
-            //if we reached the last letter we start again
-            if(loopCounter == letters.length){
-                loopCounter = 0;
-            }
+            endLoop = false;
 
-            for(int i=counter.length; i>0; i--){
-                counter[--i] = letters[loopCounter];
-                loopCounter++;
+            //if we reached the last letter start again the loop
+            for(int i = counter.length; i > 0; i--){
+                if(endLoop || i == counter.length){
+                    //if we reached the last letter start again the loop
+                    if(loopCounters[i - 1] == letters.length){
+                        loopCounters[i - 1] = 0;
+                        endLoop = true;
+                    }
+                    else {
+                        endLoop = false;
+                    }
+                    counter[i - 1] = letters[loopCounters[i - 1]];
+                    loopCounters[i - 1] = (loopCounters[i - 1] + 1);
+                }
             }
         }
 
         return new String(counter);
+    }
+
+    private static boolean isCounterLimit(){
+        double pow = 0;
+
+        for(int i=1; i<=counter.length; i++){
+            pow += Math.pow(letters.length, i);
+        }
+
+        return databaseSize == pow;
     }
 
 }
